@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numbers</title>
+</head>
+
+<body style="margin: 40px">
+    <div class="glass">
+        <form id="form" onsubmit="convertNumber()" autocomplete="off">
+            <label for="number">Vamos a convertir tu número a letras. <br>Ingrese un número entre 0 y 999
+                millones:</label>
+            <input type="text" id="number" name="number" value="0" pattern="[0-9]*" inputmode="numeric" minlength="1"
+                maxlength="9">
+        </form>
+        <div id="display"></div>
+        <div class="responsive">
+            <button class="btn1" onclick="initTest()">Iniciar Test</button>
+            <button class="btn2" onclick="finishTest()">Finalizar Test</button>
+        </div>
+    </div>
+</body>
+
+<style>
+    .glass {
+        border-radius: 10px;
+        border: 0;
+        background-color: rgba(63, 131, 209, 0.288);
+        padding: 20px;
+        margin: 0px 30px;
+        box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+        font-family: 'Segoe UI';
+        font-size: large;
+        text-align: center;
+        color: azure;
+        font-weight: bold;
+    }
+
+    body {
+        margin: 0;
+        height: 100vh;
+        background: rgb(83, 75, 196);
+        background: linear-gradient(148deg, rgb(81, 76, 146) 0%, rgba(53, 53, 186, 1) 51%, rgba(74, 224, 255, 1) 100%);
+    }
+
+    form {
+        margin: 0;
+        display: grid;
+        place-items: center;
+    }
+
+    button {
+        margin: 10px 5px;
+        padding: 7px 12px;
+        border-radius: 10px;
+        border: 0;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-size: medium;
+    }
+
+    .responsive {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    button:hover {
+        color: rgb(255, 255, 255);
+    }
+
+    .btn1 {
+        background-color: rgb(60, 185, 60);
+    }
+
+    .btn1:hover {
+        background-color: rgb(60, 160, 60);
+    }
+
+    .btn2 {
+        background-color: rgb(220, 30, 23);
+    }
+
+    .btn2:hover {
+        background-color: rgb(200, 30, 23);
+    }
+
+    input {
+        margin: 10px;
+        border-radius: 10px;
+        border: 0;
+        padding: 7px 12px;
+        color: black;
+    }
+</style>
+
+<script>
+    document.getElementById('form').addEventListener('submit', function (event) {
+        event.preventDefault();
+    });
+
+    // TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST
+    let intervalo
+    let test = document.getElementById('number')
+
+    function initTest() {
+        let respuesta = prompt("Selecciona un intervalo (Solo enteros)");
+        respuesta = parseInt(respuesta);
+
+        if (isNaN(respuesta) || respuesta <= 0) { respuesta = 250; }
+
+        intervalo = setInterval(testearConvertir, respuesta)
+    }
+    function finishTest() { clearInterval(intervalo) }
+
+    function testearConvertir() {
+        test.value = parseInt(test.value) + 1
+        convertNumber()
+    }
+    // TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST * TEST
+
+    function convertNumber() {
+        let number = document.getElementById('number').value
+
+        let maxSize = 9
+        if (number.length < maxSize) {
+            let i = number.length
+
+            while (i < maxSize) {
+                number = '0' + number
+                i++
+            }
+        }
+
+        let displayTxt = numberToTxt(number.split(""))
+        document.getElementById('display').innerHTML = displayTxt
+    }
+
+    const numbersArr = [
+        { units: "CERO", tens: null, hundreds: "CIEN" },
+        { units: "UNO", tens: "DIECI", hundreds: "CIENTO " },
+        { units: "DOS", tens: "VEINTI", hundreds: "DOSCIENTOS " },
+        { units: "TRES", tens: "TREINTA", hundreds: "TRESCIENTOS " },
+        { units: "CUATRO", tens: "CUARENTA", hundreds: "CUATROCIENTOS " },
+        { units: "CINCO", tens: "CINCUENTA", hundreds: "QUINIENTOS " },
+        { units: "SEIS", tens: "SESENTA", hundreds: "SEISCIENTOS " },
+        { units: "SIETE", tens: "SETENTA", hundreds: "SETECIENTOS " },
+        { units: "OCHO", tens: "OCHENTA", hundreds: "OCHOCIENTOS ", },
+        { units: "NUEVE", tens: "NOVENTA", hundreds: "NOVECIENTOS ", },
+    ];
+
+    function numberToTxt(number) {
+
+        for (let i = 9; i > 0; i -= 3) {
+            let j = i - 2
+            let k = i - 3
+
+            let hundred = number[k]
+            let ten = number[j]
+            let unit = number[i - 1]
+
+            let deleteUnit = false
+
+            if (i <= 6 && (parseInt(hundred) === 0 && parseInt(ten) === 0 && parseInt(unit) === 0)) {
+                number[k] = "";
+                number[j] = "";
+                number[i - 1] = "";
+            } else {
+
+                // HUNDREDS // number[number.length-3]
+                if (parseInt(hundred) !== 0) {
+                    if (parseInt(hundred) === 1 && parseInt(ten) === 0 && parseInt(unit) === 0) {
+                        hundred = numbersArr[0].hundreds
+                    } else { hundred = numbersArr[hundred].hundreds }
+                } else {
+                    hundred = "";
+                }
+
+                number[k] = hundred
+
+                // TENS // number[number.length-2]
+                if (parseInt(ten) !== 0) {
+                    if (parseInt(unit) === 0) {
+                        switch (parseInt(ten)) {
+                            case 1:
+                                ten = "DIEZ"
+                                break;
+                            case 2:
+                                ten = "VEINTE"
+                                break;
+                            default:
+                                ten = numbersArr[ten].tens
+                                break;
+                        }
+
+                        deleteUnit = true
+                    } else if (parseInt(ten) === 1) {
+                        if (parseInt(unit) <= 5) { deleteUnit = true }
+
+                        switch (parseInt(unit)) {
+                            case 1:
+                                ten = "ONCE"
+                                break;
+                            case 2:
+                                ten = "DOCE"
+                                break;
+                            case 3:
+                                ten = "TRECE"
+                                break;
+                            case 4:
+                                ten = "CATORCE"
+                                break;
+                            case 5:
+                                ten = "QUINCE"
+                                break;
+                            default:
+                                ten = numbersArr[ten].tens
+                                break;
+                        }
+                    } else {
+                        ten = numbersArr[ten].tens + ' Y '
+                    }
+                } else {
+                    ten = ""
+                }
+
+                number[j] = ten
+
+                // UNITS // number[number.length-1]
+                unit = numbersArr[unit].units;
+
+                if ((number[i - 1] !== '' && unit === 'CERO') || deleteUnit) {
+                    unit = ""
+                }
+
+                number[i - 1] = unit
+
+                // CHECKS
+                if (i === 6) {
+                    if (number[5] === 'UNO' && number[4] === '') {
+                        number[5] = "";
+                    }
+
+                    number[5] += ' MIL ';
+                } else if (i === 3) {
+                    if (number[2] === 'UNO' && number[1] === '') {
+                        number[2] = 'UN MILLÓN ';
+                    } else {
+                        number[2] += ' MILLONES ';
+                    }
+                }
+            }
+        }
+
+        return number.join("")
+    }
+</script>
+
+</html>
